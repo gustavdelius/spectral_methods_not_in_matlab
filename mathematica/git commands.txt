@@ -1,0 +1,6 @@
+git pull
+esc
+:q
+git add*
+git commit -m "yh"
+git push
