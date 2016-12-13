@@ -1,3 +1,6 @@
+#Convergence of periodic spectral method
+
+
 library("Matrix")
 
 DerivativeMatrixErrorInf <- function(N){

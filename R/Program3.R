@@ -1,3 +1,5 @@
+#band limited interpolation
+
 library("Matrix")
 
 

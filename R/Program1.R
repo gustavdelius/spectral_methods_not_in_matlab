@@ -1,3 +1,6 @@
+
+# convergence of 4th order finite difference method
+
 library("Matrix")
 
 
