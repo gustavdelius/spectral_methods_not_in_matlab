@@ -26,7 +26,12 @@ for (i in 1:N){
 # I imagine there is a faster way to do this `keep possitive values`
 # operation. In matlab it can be vectorized
 
-v <- sapply((1-abs(x-pi)/2), function(v) max(v,0))
+#v <- sapply((1-abs(x-pi)/2), function(v) max(v,0))
+
+# I did Gustav's vectorized version of this command instead
+
+v <- 1 - abs(x - pi) / 2
+v[v < 0] <- 0
 
 plot(x,v, type = "b")
 

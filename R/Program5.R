@@ -10,7 +10,14 @@ x <- h*(1:N)
 
 #Differentiation of a hat function
 
-v <- sapply((1-abs(x-pi)/2), function(v) max(v,0))
+
+#v <- sapply((1-abs(x-pi)/2), function(v) max(v,0))
+
+# I did Gustav's vectorized version of this command instead
+
+v <- 1 - abs(x - pi) / 2
+v[v < 0] <- 0
+
 vHat <- fft(v)
 wHat <- 1i*(c(0:(N/2-1),0,(-N/2+1):-1))*vHat
 w <- Re(fft(wHat, inverse=TRUE)/N)
