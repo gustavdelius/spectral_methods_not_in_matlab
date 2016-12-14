@@ -1,102 +1,64 @@
-
-
-#variable coefficient wave equation pde
-# evolution by spectral methods
+# Variable coefficient wave equation pde evolution by spectral methods
 
 library("rgl")
 
 # grid setup
-
 N <- 128
 h <- 2*pi/N
 x <- h*(1:N)
 t <- 0
+dt <- h/4  # time step of one iteration in de solver
+c <- 0.2 + sin(x-1)^2 # variable coefficient
+# Initial function
+v <- exp(-20*(x-1)^2)
+# Function just before starting point (bit of a hack, better to work it out
+# using backwards time euler)
+vold <- exp(-20*(x-0.2*dt-1)^2)
 
-#dt = time step of one iteration in de solver
-
-dt <- h/4
-
-#variable coefficient
-
-c <- 0.2 + sin(x-1)^2
-
-#Initial funtction
-
-v <- exp(-100*(x-1)^2)
-
-#Function just before starting point (bit of a hack, better to work it out using
-#backwards time euler)
-
-vold <- exp(-100*(x-0.2*dt-1)^2)
-
-#leap frog time stepping
-
-#tmax is total amount of t system is run for, as on plot
-
-tmax <- 8
-
-#tplot = ?amount of time between plotted points ?
-
-tplot <- 0.15
-
-#plotgap = number of iterations of de solver between plotted points
-
+# leap frog time stepping
+tmax <- 8 # total amount of t system is run for
+tplot <- 0.15  # approximate amount of time between plotted points
+# number of iterations of the solver between plotted points
 plotgap <- round(tplot/dt)
-
-#nplots = number of time points data is plotted for
-
+# number of time points data is plotted for
 nplots <- round(tmax/tplot)
 
-
-#Use row binding to store PDE evolution data
-# A row stores the data from a given time step, 
-# the first value on that row is the time, the rest 
+# Create array to store PDE evolution data
+# A row stores the data from a given time step,
+# the first value on that row is the time, the rest
 # are the amplitute values at the N grid points
-# this yields a similar output to that given by the ODE function 
-#we use rbind() to keep concatenating new rows of generated values
+# this yields a similar output to that given by the ODE function
+spaceTimeData <- matrix(data = 0,
+                        nrow = nplots + 1,
+                        ncol = N + 1)
 
-spaceTimeData <- matrix(data = 0, nrow = nplots + 1, ncol = N+1)
-
-
-##spaceTimeData <- c(0,v)
-##switched to old method of building while space time matrix at start
-
-spaceTimeData[1,] <- c(0,v)
-
-
-
-
+spaceTimeData[1, ] <- c(0, v)  # First row holds initial time and intial value
 
 #loop for ith plot output
-for (i in 1:nplots){
+for (i in 1:nplots) {
     #loop for nth time step between plotting moments
-        for (n in 1:plotgap){
-            t <- t+dt
-            
-            vHat <- fft(v)
-            wHat <- 1i*(c(0:(N/2-1),0,(-N/2+1):-1))*vHat
-            w <- Re(fft(wHat, inverse=TRUE)/N)
-            
-            vnew <- vold - 2*dt*c*w
-            vold <- v
-            v <- vnew
-        } 
-##    spaceTimeData <- rbind(spaceTimeData, c(t,v) )
-    spaceTimeData[i+1,] <- c(t,v)
+    for (n in 1:plotgap) {
+        t <- t + dt
+        vHat <- fft(v)
+        wHat <- 1i * (c(0:(N/2-1), 0, (-N/2+1):-1))*vHat
+        w <- Re(fft(wHat, inverse=TRUE)/N)
+        # Use leapfrog method to calculate v at next timestep
+        vnew <- vold - 2*dt*c*w
+        vold <- v
+        v <- vnew
     }
+    spaceTimeData[i+1, ] <- c(t, v)
+}
 
-# I think this code evolves the PDE just like in the book, although it looks 
+# I think this code evolves the PDE just like in the book, although it looks
 # dodgy because of the leapfrog initialization hack Trefethen used.
 
-plot(x,spaceTimeData[nplots+1,2:(N+1)])
+# Plot solution at final time
+plot(x, spaceTimeData[nplots+1, 2:(N+1)], type="l")
 
-Time <- spaceTimeData[,1]
-
-Amplitude <- spaceTimeData[,(2:(N+1))]
-
-# I find it strange that the function is plotted with x increasing from right to left
-
-
+# Make 3D plot of solution over time
+Time <- spaceTimeData[, 1]
+Amplitude <- spaceTimeData[, 2:(N+1)]
 persp3d(Time, x, Amplitude, col = "lightblue")
-
-
+# I find it strange that the function is plotted with x increasing from right 
+# to left
