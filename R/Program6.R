@@ -44,7 +44,14 @@ nplots <- round(tmax/tplot)
 spaceTimeData <- matrix(data = 0, nrow = nplots + 1, ncol = N+1)
 
 
-spaceTimeData <- c(0,v)
+##spaceTimeData <- c(0,v)
+##switched to old method of building while space time matrix at start
+
+spaceTimeData[1,] <- c(0,v)
+
+
+
+
 
 #loop for ith plot output
 for (i in 1:nplots){
@@ -60,8 +67,9 @@ for (i in 1:nplots){
             vold <- v
             v <- vnew
         } 
-    spaceTimeData <- rbind(spaceTimeData, c(t,v) )
-}
+##    spaceTimeData <- rbind(spaceTimeData, c(t,v) )
+    spaceTimeData[i+1,] <- c(t,v)
+    }
 
 # I think this code evolves the PDE just like in the book, although it looks 
 # dodgy because of the leapfrog initialization hack Trefethen used.
