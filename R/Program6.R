@@ -1,43 +1,29 @@
-
-
-#variable coefficient wave equation pde
-# evolution by spectral methods
+# Variable coefficient wave equation pde evolution by spectral methods
 
 library("rgl")
 
 # grid setup
-
 N <- 128
 h <- 2*pi/N
 x <- h*(1:N)
 t <- 0
 
-#dt = time step of one iteration in de solver
-
+# dt = time step of one iteration in de solver
 dt <- h/4
 
-#variable coefficient
-
+# variable coefficient
 c <- 0.2 + sin(x-1)^2
 
-#Initial funtction
-
+# Initial function
 v <- exp(-100*(x-1)^2)
 
-#Function just before starting point (bit of a hack, better to work it out using
-#backwards time euler)
-
+# Function just before starting point (bit of a hack, better to work it out 
+# using backwards time euler)
 vold <- exp(-100*(x-0.2*dt-1)^2)
 
-#leap frog time stepping
-
-#tmax is total amount of t system is run for, as on plot
-
-tmax <- 8
-
-#tplot = ?amount of time between plotted points ?
-
-tplot <- 0.15
+# leap frog time stepping
+tmax <- 8 # total amount of t system is run for, as on plot
+tplot <- 0.15  # amount of time between plotted points
 
 #plotgap = number of iterations of de solver between plotted points
 
