@@ -11,15 +11,11 @@ x <- h*(1:N)
 
 # I could not find a short way of doing the same type of toeplitz command 
 # that matlab uses so I had to code it in a more lengthly way.
+# GWD: the following was inspired by p.69 in The Art of R Programming
 
 coluu <- c(0,(.5*(-1)^(1:(N-1)))*1/tan(1:(N-1)*h/2))
 m <- matrix(data = 0, nrow = N, ncol = N)
-for (i in 1:N){
-    for (j in 1:N){
-        m[i,j] <- coluu[((i-j) %% N)+1]
-    }   
-}
-
+m <- matrix(coluu[(row(m)-col(m)) %% N + 1], nrow=N)
 
 #Differentiation of a hat function
 
